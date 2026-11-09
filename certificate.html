@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吳清鋒SDGs 性別平權小達人 - 學習證書</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Noto Sans TC', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* 控制面板 (列印時會自動隱藏) */
+    .control-panel {
+      background: #ffffff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 25px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .control-panel label {
+      font-weight: 700;
+      color: #333;
+      font-size: 1.05rem;
+      white-space: nowrap;
+    }
+
+    .control-panel input[type="text"] {
+      flex: 1;
+      padding: 10px 16px;
+      font-size: 1rem;
+      border: 2px solid #e05297;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .control-panel input[type="text"]:focus {
+      border-color: #a72368;
+    }
+
+    .btn-download {
+      background-color: #e05297;
+      color: #ffffff;
+      border: none;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn-download:hover {
+      background-color: #a72368;
+    }
+
+    .btn-download:active {
+      transform: scale(0.98);
+    }
+
+    /* 證書頁面容器 (A4 橫式比例 297mm x 210mm) */
+    .certificate-container {
+      width: 297mm;
+      height: 210mm;
+      background: #ffffff;
+      padding: 12mm;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 外層邊框 */
+    .cert-border-outer {
+      border: 4px solid #e05297;
+      height: 100%;
+      width: 100%;
+      padding: 6mm;
+    }
+
+    /* 內層裝飾邊框與背景底紋 */
+    .cert-border-inner {
+      border: 2px dashed #f3a4c7;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 35px 40px;
+      text-align: center;
+      background: radial-gradient(circle at center, #ffffff 65%, #fff5f8 100%);
+    }
+
+    /* 頁首標題區 */
+    .cert-header {
+      margin-top: 5px;
+    }
+
+    .sdg-badge {
+      display: inline-block;
+      background-color: #ff3a21; /* SDG 5 代表色 */
+      color: #ffffff;
+      font-weight: 700;
+      padding: 4px 18px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .cert-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #8b1d51;
+      letter-spacing: 6px;
+    }
+
+    /* 證書主要內容區 */
+    .cert-body {
+      margin: 15px 0;
+      width: 100%;
+    }
+
+    .recipient-name {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #111111;
+      border-bottom: 2px solid #333333;
+      display: inline-block;
+      min-width: 240px;
+      padding: 0 15px 5px 15px;
+      margin: 10px 0 20px 0;
+    }
+
+    .cert-text {
+      font-size: 1.2rem;
+      color: #444444;
+      line-height: 1.8;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .honor-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #e05297;
+      margin: 12px 0;
+      letter-spacing: 1px;
+    }
+
+    /* 頁尾與章戳 */
+    .cert-footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 20px;
+    }
+
+    .cert-date {
+      font-size: 1.05rem;
+      color: #555555;
+      text-align: left;
+    }
+
+    .cert-seal {
+      width: 85px;
+      height: 85px;
+      border: 3px double #e05297;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e05297;
+      font-weight: bold;
+      font-size: 0.85rem;
+      transform: rotate(-10deg);
+      line-height: 1.3;
+    }
+
+    /* ================= 列印樣式設定 ================= */
+    @media print {
+      @page {
+        size: A4 landscape; /* 指定 A4 橫向印刷 */
+        margin: 0;
+      }
+
+      body {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      /* 列印時隱藏上方控制區 */
+      .control-panel {
+        display: none !important;
+      }
+
+      /* 證書滿版列印 */
+      .certificate-container {
+        box-shadow: none;
+        width: 100vw;
+        height: 100vh;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 控制面板 (填寫姓名與下載按鈕) -->
+  <div class="control-panel">
+    <label for="userNameInput">請輸入姓名：</label>
+    <input type="text" id="userNameInput" placeholder="請在此輸入您的姓名" oninput="updateName()">
+    <button class="btn-download" onclick="downloadCertificate()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      下載 / 列印證書
+    </button>
+  </div>
+
+  <!-- 2. 第三頁：證書頁本體 -->
+  <div class="certificate-container">
+    <div class="cert-border-outer">
+      <div class="cert-border-inner">
+        
+        <!-- 標頭 -->
+        <div class="cert-header">
+          <div class="sdg-badge">SDG 5 性別平等</div>
+          <h1 class="cert-title">學 習 證 書</h1>
+        </div>
+
+        <!-- 內容區域 -->
+        <div class="cert-body">
+          <p style="font-size: 1.1rem; color: #666666;">茲證明</p>
+          <div class="recipient-name" id="displayName">（學員姓名）</div>
+          <p class="cert-text">
+            完成永續發展目標（SDGs）性別平等主題課程，表現優異。<br>
+            特頒此證，以資鼓勵，並授予
+          </p>
+          <div class="honor-title">「吳清鋒SDGs 性別平權小達人」</div>
+          <p class="cert-text" style="font-size: 0.98rem; color: #666666; margin-top: 4px;">
+            願能持續發揮影響力，攜手推動尊重、包容與平等的社會！
+          </p>
+        </div>
+
+        <!-- 頁尾與章戳 -->
+        <div class="cert-footer">
+          <div class="cert-date" id="certDate">
+            發證日期：年 月 日
+          </div>
+          <div class="cert-seal">
+            SDGs 平權<br>認證章
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 即時動態同步姓名至證書上
+    function updateName() {
+      const inputVal = document.getElementById('userNameInput').value.trim();
+      const displayElem = document.getElementById('displayName');
+      displayElem.textContent = inputVal !== '' ? inputVal : '（學員姓名）';
+    }
+
+    // 自動計算當前日期
+    function setTodayDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      document.getElementById('certDate').textContent = `發證日期：${year} 年 ${month} 月 ${day} 日`;
+    }
+
+    // 下載與列印觸發功能
+    function downloadCertificate() {
+      const nameInput = document.getElementById('userNameInput').value.trim();
+      if (!nameInput) {
+        alert('請先輸入您的姓名再進行列印或下載！');
+        document.getElementById('userNameInput').focus();
+        return;
+      }
+      
+      // 呼叫瀏覽器原生列印
+      window.print();
+    }
+
+    // 初始化頁面發證日期
+    window.onload = setTodayDate;
+  </script>
+</body>
+</html>
